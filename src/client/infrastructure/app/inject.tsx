@@ -1,5 +1,7 @@
-import { useAppContainer } from '@client/infrastructure/app/container';
-import { AppContainer } from '@client/infrastructure/interfaces/AppContainer';
+import {
+  AppContainer,
+  useAppContainer,
+} from '@client/infrastructure/app/container';
 import { FunctionComponent, ComponentType } from 'react';
 /**
  * Inject external dependencies from the app container into a given component
@@ -9,11 +11,14 @@ import { FunctionComponent, ComponentType } from 'react';
  */
 export function inject<OuterComponentProps, InjectedProps>(
   Component: ComponentType<OuterComponentProps & InjectedProps>,
-  selector: (container: AppContainer) => InjectedProps
+  selector: (
+    container: AppContainer,
+    outerProps: OuterComponentProps
+  ) => InjectedProps
 ) {
   const Wrapper: FunctionComponent<OuterComponentProps> = (props) => {
     const appContainer = useAppContainer();
-    const selected = selector(appContainer);
+    const selected = selector(appContainer, props);
     return <Component {...props} {...selected} />;
   };
   return Wrapper;

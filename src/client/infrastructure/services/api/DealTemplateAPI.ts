@@ -1,6 +1,7 @@
 import { DealTemplate } from '@common/domain/entities/DealTemplate';
 
 export class DealTemplateAPI {
+  async createDeal() {}
   async getTemplates(): Promise<DealTemplate[]> {
     return [
       {

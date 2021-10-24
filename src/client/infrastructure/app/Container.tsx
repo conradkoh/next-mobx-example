@@ -1,3 +1,4 @@
+import { DealAPI } from '@client/infrastructure/services/api/DealAPI';
 import { DealTemplateAPI } from '@client/infrastructure/services/api/DealTemplateAPI';
 import { DataDogService } from '@client/infrastructure/services/DatadogService';
 import { GoogleAnalyticsService } from '@client/infrastructure/services/GoogleAnalyticsService';
@@ -10,6 +11,7 @@ export class AppContainer {
   isReady: boolean = false;
   dealTemplateStore: DealTemplateStore = new DealTemplateStore();
   dealTemplateAPI: DealTemplateAPI = new DealTemplateAPI();
+  dealAPI: DealAPI = new DealAPI();
   translationService: TranslationService = new TranslationService();
   googleAnalyticsService: GoogleAnalyticsService = new GoogleAnalyticsService();
   datadogService: DataDogService = new DataDogService();

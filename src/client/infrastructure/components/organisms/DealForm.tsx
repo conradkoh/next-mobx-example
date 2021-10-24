@@ -1,16 +1,18 @@
 import { useAppContainer } from '@client/infrastructure/app/container';
 import { observer } from 'mobx-react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { FunctionComponent } from 'react';
 import { Button } from '@mui/material';
-import { TranslateFunc } from '@client/infrastructure/interfaces/TranslateFunc';
 import {
   dealTemplateViewModel,
   DealTemplateViewModel,
 } from '@client/infrastructure/view-models/DealTemplate';
+import { TranslateFunc } from '@client/infrastructure/services/TranslationService';
+import { inject } from '@client/infrastructure/app/inject';
+import { CreateDealParams } from '@common/domain/entities/Deal';
 interface DealFormProps {
   dealTemplates: DealTemplateViewModel[];
-  onSubmit: () => void;
+  onSubmit: (params: CreateDealParams) => void;
   translate: TranslateFunc;
 }
 /**
@@ -23,6 +25,7 @@ interface DealFormProps {
  */
 const DealForm: FunctionComponent<DealFormProps> = (props) => {
   const { dealTemplates, translate } = props;
+  const [formState, setFormState] = useState<Partial<CreateDealParams>>({});
   return (
     <>
       <h1>{translate('deal_form_title')}</h1>
@@ -38,46 +41,59 @@ const DealForm: FunctionComponent<DealFormProps> = (props) => {
         );
       })}
       <div>
-        <Button onClick={() => props.onSubmit()}>
+        <Button
+          onClick={() => {
+            //TODO: Implement validation
+            props.onSubmit(formState as CreateDealParams);
+          }}
+        >
           {translate('deal_form_submit_button_label')}
         </Button>
       </div>
     </>
   );
 };
-/**
- * The provide function is responsible for linking the component to the application state / lifecycle
- * @param Component
- * @returns
- */
-const provide = (Component: typeof DealForm) => {
-  const Wrapper: FunctionComponent = () => {
-    const app = useAppContainer();
-    const translate = useCallback<TranslateFunc>(
-      (...p) => {
-        return app.translationService.translate(...p);
-      },
-      [app.translationService.isReady]
-    );
-
-    return (
-      <>
-        <Component
-          translate={translate}
-          dealTemplates={app.dealTemplateStore.dealTemplates.map((d) =>
+export default observer(
+  inject<{ onSubmit?: (params: CreateDealParams) => void }, DealFormProps>(
+    DealForm,
+    (app, props) => {
+      //it is ok to call hooks within this
+      const translate = useCallback<TranslateFunc>(
+        (...p) => {
+          return app.translationService.translate(...p);
+        },
+        [app.translationService.isReady]
+      );
+      const onSubmit = useCallback(
+        (params) => {
+          app.googleAnalyticsService.pushGtmEvent(
+            'deal_form_submit_button',
+            'clicked',
+            {}
+          );
+          props?.onSubmit?.(params); //we can optionally forward the props to the parent if we want
+          app.dealAPI.createDeal(params); //we can also directly call the API if we want to
+        },
+        [
+          app.googleAnalyticsService.pushGtmEvent,
+          props?.onSubmit,
+          app.dealAPI.createDeal,
+        ]
+      );
+      const dealTemplates = useMemo(
+        () =>
+          app.dealTemplateStore.dealTemplates.map((d) =>
+            //Interactions with the deal view model can be done in the inject callback
             dealTemplateViewModel(d)
-          )}
-          onSubmit={() => {
-            app.googleAnalyticsService.pushGtmEvent(
-              'deal_form_submit_button',
-              'clicked',
-              {}
-            );
-          }}
-        />
-      </>
-    );
-  };
-  return Wrapper;
-};
-export default observer(provide(DealForm));
+          ),
+        [app.dealTemplateStore.dealTemplates]
+      );
+
+      return {
+        dealTemplates,
+        onSubmit,
+        translate,
+      };
+    }
+  )
+);

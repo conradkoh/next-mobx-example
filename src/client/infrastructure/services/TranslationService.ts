@@ -7,6 +7,7 @@ export class TranslationService {
     makeAutoObservable(this, {
       setReady: action,
     });
+    this.translate.bind(this);
   }
   setReady() {
     this.isReady = true;
@@ -28,3 +29,10 @@ export class TranslationService {
     return translated;
   }
 }
+/**
+ * Translate Function Interface
+ */
+export type TranslateFunc = (
+  key: string,
+  params?: Record<string, string | number>
+) => string;
