@@ -1,5 +1,5 @@
 import { DealTemplate } from '@common/domain/entities/DealTemplate';
-import { autorun, makeAutoObservable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 export class DealTemplateStore {
   public dealTemplates: DealTemplate[] = [];

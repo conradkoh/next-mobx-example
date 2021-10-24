@@ -1,34 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Next MobX Example
 
-## Getting Started
+This project acts as an example for a project using NextJS, with MobX as the store
 
-First, run the development server:
+## Services
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+Services are integrations with any third party services or APIs
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stores
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+Stores are the source of truth for data for data consumption. These should remain in the entity format
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## View Models
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+View models are responsible for converting store data into a presentation format, with some examples of responsibilities being
 
-## Learn More
+- Flattening of data structures
+- Handling optionals from a null format to a human readable format
+- Conversion of data when there are many presentation formats for a single data structure
 
-To learn more about Next.js, take a look at the following resources:
+# Components
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Atomic Design
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Atoms
+  - Atoms cannot contain other atoms
+- Molecules
+  - Molecules can contain other molecules
+- Organisms
+  - Organisms cannot contain other organisms
+  - Organisms are only covered in page level tests
+  - Organisms must not be aware of APIs and Services
+  - Organisms can consume store data
+  - Organisms must not imperatively fetch data
+- Pages
+  - Pages facilitate inter-organism communication
+  - Pages can be aware of APIs and Services to fetch data

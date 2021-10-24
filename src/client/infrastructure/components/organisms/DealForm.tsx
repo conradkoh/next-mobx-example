@@ -1,9 +1,9 @@
-import { useAppContainer } from '@client/infrastructure/app';
+import { useAppContainer } from '@client/infrastructure/app/container';
 import { observer } from 'mobx-react';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { FunctionComponent } from 'react';
 import { Button } from '@mui/material';
-import { TranslateFunc } from '@client/infrastructure/translations';
+import { TranslateFunc } from '@client/infrastructure/interfaces/TranslateFunc';
 import {
   dealTemplateViewModel,
   DealTemplateViewModel,

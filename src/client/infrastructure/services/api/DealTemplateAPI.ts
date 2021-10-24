@@ -12,6 +12,3 @@ export class DealTemplateAPI {
     ];
   }
 }
-
-const dealTemplateAPI = new DealTemplateAPI();
-export default dealTemplateAPI;

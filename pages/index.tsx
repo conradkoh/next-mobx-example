@@ -1,14 +1,12 @@
-import dealTemplateAPI from '@client/infrastructure/api/DealTemplateAPI';
-import { useAppContainer } from '@client/infrastructure/app';
-import DealForm from '@client/infrastructure/views/DealForm';
+import { useAppContainer } from '@client/infrastructure/app/container';
+import DealForm from '@client/infrastructure/components/organisms/DealForm';
 import { observer } from 'mobx-react';
 import type { NextPage } from 'next';
 import { useEffect } from 'react';
-
-const Home: NextPage = () => {
-  const app = useAppContainer();
+interface PageProps {}
+const Home: NextPage<PageProps> = (props) => {
+  const { dealTemplateStore, dealTemplateAPI } = useAppContainer();
   useEffect(() => {
-    const dealTemplateStore = app.dealTemplateStore;
     (async () => {
       if (!dealTemplateStore.isLoaded) {
         const dealTemplates = await dealTemplateAPI.getTemplates();
